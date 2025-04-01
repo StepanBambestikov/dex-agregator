@@ -18,13 +18,13 @@ A cross-chain decentralized exchange (DEX) aggregator that enables optimal token
 
 ## Technical Architecture
 
-```
 ### Cross chain logic
+
 ![alt text](https://github.com/StepanBambestikov/dex-agregator/blob/main/images/crosschainLogic.png?raw=true)
 
 ### Inner chain logic
+
 ![alt text](https://github.com/StepanBambestikov/dex-agregator/blob/main/images/innerLogic.png?raw=true)
-```
 
 ### Core Components
 
