@@ -13,8 +13,6 @@ A cross-chain decentralized exchange (DEX) aggregator that enables optimal token
 - **Multi-Chain Support**: Works across Ethereum, Arbitrum, and Optimism (mainnets and testnets)
 - **DEX Integration**: Supports Uniswap V2/V3 and SushiSwap
 - **Cross-Chain Messaging**: Utilizes Axelar Network for secure cross-chain communication
-- **Gas Optimization**: Implements efficient routing to minimize transaction costs
-- **Modular Architecture**: Easily extendable to support additional DEXs and chains
 
 ## Technical Architecture
 
@@ -34,17 +32,18 @@ A cross-chain decentralized exchange (DEX) aggregator that enables optimal token
 4. **OuterChainRegistry**: Stores cross-chain configuration and partner router addresses
 5. **DEX Adapters**: Modular integrations with various DEX protocols
 
+The project does not provide for taking a commission for executing swap and cross-chain transfer commands.
+Therefore, the execution of commands is limited to a maximum of one transfer across the bridge, for which the user pays a commission.
+
 ## Deployment
 
 ### Supported Networks
 
-| Network         | Status  | DEX Support              |
-| --------------- | ------- | ------------------------ |
-| Ethereum        | ✅ Live | Uniswap V2/V3, SushiSwap |
-| Arbitrum        | ✅ Live | SushiSwap, Uniswap V3    |
-| Optimism        | ✅ Live | Uniswap V3               |
-| Goerli          | ✅ Test | Uniswap V2               |
-| Arbitrum Goerli | ✅ Test | -                        |
+| Network  | Status  | DEX Support              |
+| -------- | ------- | ------------------------ |
+| Ethereum | ✅ Live | Uniswap V2/V3, SushiSwap |
+| Arbitrum | ✅ Live | SushiSwap, Uniswap V3    |
+| Optimism | ✅ Live | Uniswap V3               |
 
 ### Deployment Scripts
 
@@ -75,29 +74,16 @@ ARBISCAN_API_KEY=YOUR_KEY
 
 ### Cross-Chain Swap (Ethereum → Arbitrum)
 
-```solidity
+````solidity
 // Initialize routers
 IOuterChainRouter outerRouter = IOuterChainRouter(0x...);
 IInnerChainRouter innerRouter = IInnerChainRouter(0x...);
-
-// Execute cross-chain swap
-outerRouter.swapCrossChain(
-    "arbitrum",                 // Destination chain
-    address(USDC),              // Source token
-    address(USDT),              // Destination token
-    100 * 1e6,                  // Amount (100 USDC)
-    msg.sender,                 // Recipient
-    1 hours,                    // Deadline
-    "UniswapV3"                 // Preferred DEX
-);
-```
 
 ## Development
 
 ### Prerequisites
 
 - Foundry (forge, cast, anvil)
-- Node.js 16+
 - Git
 
 ### Setup
@@ -107,7 +93,7 @@ outerRouter.swapCrossChain(
 ```bash
 git clone https://github.com/your-repo/cross-chain-dex.git
 cd cross-chain-dex
-```
+````
 
 2. Install dependencies:
 
