@@ -71,7 +71,6 @@ contract MockERC20 is IERC20 {
         _allowances[owner][spender] = amount;
     }
 
-    // Дополнительные функции для тестирования
     function mint(address account, uint256 amount) public {
         _balances[account] += amount;
         _totalSupply += amount;

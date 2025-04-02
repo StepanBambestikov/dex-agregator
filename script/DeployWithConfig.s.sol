@@ -11,17 +11,7 @@ import "../src/adapters/impl/UniswapV3.sol";
 import "../src/OuterChainRouter.sol";
 import "../src/OuterChainRegistry.sol";
 
-/**
- * Configurable deployment script that allows you to specify which DEX adapters to deploy
- * You can run this script with specific parameters to customize your deployment
- *
- * Example: 
- * forge script script/DeployWithConfig.s.sol:DeployWithConfig --rpc-url $YOUR_RPC_URL 
- *      --sig "deployWithConfig(string,string,address,address,address,address,address,address,address,bool,bool,bool)" 
- *      "ethereum" "optimism" 0x12345... 0x23456... 0x34567... 0x45678... 0x56789... 0x67890... 0x78901... true true true
- */
 contract DeployWithConfig is Script {
-    // Развертывание с настраиваемыми параметрами
 
     struct DeploymentConfig {
         string chainName;
@@ -40,113 +30,18 @@ contract DeployWithConfig is Script {
         bool deployUniV3;
     }
 
-    // function deployWithConfig(
-    //     string memory chainName,             // Название текущей цепи для Axelar
-    //     string memory destinationChain,      // Название целевой цепи для Axelar
-    //     address axelarGateway,              // Адрес Axelar Gateway в текущей цепи
-    //     address axelarGasService,           // Адрес Axelar Gas Service в текущей цепи
-    //     address uniswapV2Router,            // Адрес UniswapV2 Router (0x0, если не используется)
-    //     address uniswapV2Factory,           // Адрес UniswapV2 Factory (0x0, если не используется)
-    //     address sushiswapRouter,            // Адрес SushiSwap Router (0x0, если не используется)
-    //     address sushiswapFactory,           // Адрес SushiSwap Factory (0x0, если не используется)
-    //     address uniswapV3Router,            // Адрес UniswapV3 Router (0x0, если не используется)
-    //     address uniswapV3Factory,           // Адрес UniswapV3 Factory (0x0, если не используется)
-    //     address uniswapV3Quoter,            // Адрес UniswapV3 Quoter (0x0, если не используется)
-    //     bool deployUniV2,                   // Флаг для развертывания UniswapV2 адаптера
-    //     bool deploySushi,                   // Флаг для развертывания SushiSwap адаптера
-    //     bool deployUniV3                    // Флаг для развертывания UniswapV3 адаптера
-    // ) public {
-    //     console.log("\n=== Deploying to %s ===", chainName);
-        
-    //     vm.startBroadcast();
-        
-    //     // Deploy InnerChainRegistry
-    //     InnerChainRegistry registry = new InnerChainRegistry();
-    //     console.log("Deployed InnerChainRegistry at:", address(registry));
-        
-    //     // Deploy DEX adapters based on parameters
-    //     if (deployUniV2) {
-    //         require(uniswapV2Router != address(0) && uniswapV2Factory != address(0), "UniswapV2 addresses required");
-    //         UniswapV2Adapter uniswapV2Adapter = new UniswapV2Adapter(uniswapV2Router, uniswapV2Factory);
-    //         registry.addAdapter("UniswapV2", address(uniswapV2Adapter));
-    //         console.log("Deployed UniswapV2Adapter at:", address(uniswapV2Adapter));
-    //     }
-        
-    //     if (deploySushi) {
-    //         require(sushiswapRouter != address(0) && sushiswapFactory != address(0), "SushiSwap addresses required");
-    //         SushiSwapAdapter sushiswapAdapter = new SushiSwapAdapter(sushiswapRouter, sushiswapFactory);
-    //         registry.addAdapter("SushiSwap", address(sushiswapAdapter));
-    //         console.log("Deployed SushiSwapAdapter at:", address(sushiswapAdapter));
-    //     }
-        
-    //     if (deployUniV3) {
-    //         require(
-    //             uniswapV3Router != address(0) && 
-    //             uniswapV3Factory != address(0) && 
-    //             uniswapV3Quoter != address(0), 
-    //             "UniswapV3 addresses required"
-    //         );
-    //         UniswapV3Adapter uniswapV3Adapter = new UniswapV3Adapter(uniswapV3Router, uniswapV3Factory, uniswapV3Quoter);
-    //         registry.addAdapter("UniswapV3", address(uniswapV3Adapter));
-    //         console.log("Deployed UniswapV3Adapter at:", address(uniswapV3Adapter));
-    //     }
-        
-    //     // Deploy InnerChainRouter
-    //     InnerChainRouter router = new InnerChainRouter(registry);
-    //     console.log("Deployed InnerChainRouter at:", address(router));
-        
-    //     // Deploy OuterChainRegistry
-    //     OuterChainRegistry outerRegistry = new OuterChainRegistry();
-    //     console.log("Deployed OuterChainRegistry at:", address(outerRegistry));
-        
-    //     // Deploy OuterChainRouterAxelar
-    //     OuterChainRouter outerRouter = new OuterChainRouter(
-    //         address(router),
-    //         address(outerRegistry),
-    //         axelarGateway,
-    //         axelarGasService
-    //     );
-    //     console.log("Deployed OuterChainRouterAxelar at:", address(outerRouter));
-        
-    //     // Authorize the router to update the registry
-    //     outerRegistry.setAuthorizedRouter(address(outerRouter), true);
-        
-    //     // Настройка cross-chain параметров
-    //     configureRegistryForCrossChain(
-    //         outerRegistry, 
-    //         chainName, 
-    //         destinationChain, 
-    //         address(outerRouter)
-    //     );
-        
-    //     vm.stopBroadcast();
-        
-    //     console.log("\n=== Deployment Summary ===");
-    //     console.log("Chain Name:", chainName);
-    //     console.log("InnerChainRegistry:", address(registry));
-    //     console.log("InnerChainRouter:", address(router));
-    //     console.log("OuterChainRegistry:", address(outerRegistry));
-    //     console.log("OuterChainRouterAxelar:", address(outerRouter));
-    //     console.log("Configured for cross-chain with:", destinationChain);
-    // }
-    
-    // Настройка registry для кросс-чейн взаимодействия
     function configureRegistryForCrossChain(
         OuterChainRegistry registry,
         string memory chainName,
         string memory destinationChain,
         address routerAddress
     ) internal {
-        // Здесь нужно будет заполнить реальными данными после деплоя
-        // Для тестирования оставляем в таком виде
         string memory routerAddressString = toAsciiString(routerAddress);
         
-        registry.setChainName(1, chainName); // Используем 1 как chainId для текущей цепи (замените на реальный)
+        registry.setChainName(1, chainName);
         registry.setRemoteRouterAddress(destinationChain, "0x0000000000000000000000000000000000000000"); 
-        // В будущем вы можете обновить адрес удаленного роутера после его деплоя
     }
     
-    // Деплой в конкретные цепи
     function deployToEthereum() public {
         DeploymentConfig memory config = DeploymentConfig({
             chainName: "ethereum",
@@ -154,7 +49,7 @@ contract DeployWithConfig is Script {
             axelarGateway: 0x4F4495243837681061C4743b74B3eEdf548D56A5,
             axelarGasService: 0x2d5d7d31F671F86C782533cc367F14109a082712,
             uniswapV2Router: 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D,
-            uniswapV2Factory: 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f,
+            uniswapV2Factory: 0xF62c03E08ada871A0bEb309762E260a7a6a880E6,
             sushiswapRouter: 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F,
             sushiswapFactory: 0xC0AEe478e3658e2610c5F7A4A2E1777cE9e4f2Ac,
             uniswapV3Router: 0xE592427A0AEce92De3Edee1F18E0157C05861564,
@@ -172,6 +67,12 @@ contract DeployWithConfig is Script {
         if (config.deployUniV2) {
             require(config.uniswapV2Router != address(0) && config.uniswapV2Factory != address(0), "UniswapV2 addresses required");
             UniswapV2Adapter uniswapV2Adapter = new UniswapV2Adapter(config.uniswapV2Router, config.uniswapV2Factory);
+            
+            (bool success, ) = address(uniswapV2Adapter).call(
+                abi.encodeWithSignature("isPairSupported(address,address)", address(0), address(0))
+            );
+            require(success, "UniswapV2Adapter: Invalid interface");
+
             registry.addAdapter("UniswapV2", address(uniswapV2Adapter));
             console.log("Deployed UniswapV2Adapter at:", address(uniswapV2Adapter));
         }
@@ -179,6 +80,12 @@ contract DeployWithConfig is Script {
         if (config.deploySushi) {
             require(config.sushiswapRouter != address(0) && config.sushiswapFactory != address(0), "SushiSwap addresses required");
             SushiSwapAdapter sushiswapAdapter = new SushiSwapAdapter(config.sushiswapRouter, config.sushiswapFactory);
+            
+            (bool success, ) = address(sushiswapAdapter).call(
+                abi.encodeWithSignature("isPairSupported(address,address)", address(0), address(0))
+            );
+            require(success, "SushiSwapAdapter: Invalid interface");
+            
             registry.addAdapter("SushiSwap", address(sushiswapAdapter));
             console.log("Deployed SushiSwapAdapter at:", address(sushiswapAdapter));
         }
@@ -195,6 +102,12 @@ contract DeployWithConfig is Script {
                 config.uniswapV3Factory, 
                 config.uniswapV3Quoter
             );
+
+            (bool success, ) = address(uniswapV3Adapter).call(
+                abi.encodeWithSignature("isPairSupported(address,address)", address(0), address(0))
+            );
+            require(success, "UniswapV3Adapter: Invalid interface");
+
             registry.addAdapter("UniswapV3", address(uniswapV3Adapter));
             console.log("Deployed UniswapV3Adapter at:", address(uniswapV3Adapter));
         }
@@ -244,6 +157,33 @@ contract DeployWithConfig is Script {
         
         _printDeploymentSummary(config, address(registry), address(router), address(outerRegistry), address(outerRouter));
     }
+
+    function _printDeploymentSummary(
+        DeploymentConfig memory config,
+        address registry,
+        address router,
+        address outerRegistry,
+        address outerRouter
+    ) internal pure {
+        console.log("\n=== Deployment Summary ===");
+        console.log("Network: %s", config.chainName);
+        console.log("Destination Chain: %s", config.destinationChain);
+        console.log("--------------------------");
+        console.log("Core Contracts:");
+        console.log("- InnerChainRegistry: %s", registry);
+        console.log("- InnerChainRouter: %s", router);
+        console.log("- OuterChainRegistry: %s", outerRegistry);
+        console.log("- OuterChainRouter: %s", outerRouter);
+        console.log("--------------------------");
+        console.log("DEX Adapters Configured:");
+        if (config.deployUniV2) console.log("- UniswapV2: Enabled");
+        if (config.deploySushi) console.log("- SushiSwap: Enabled");
+        if (config.deployUniV3) console.log("- UniswapV3: Enabled");
+        console.log("--------------------------");
+        console.log("Axelar Configuration:");
+        console.log("- Gateway: %s", config.axelarGateway);
+        console.log("- Gas Service: %s", config.axelarGasService);
+    }
     
     function deployToOptimism() public {
         DeploymentConfig memory config = DeploymentConfig({
@@ -272,16 +212,16 @@ contract DeployWithConfig is Script {
             destinationChain: "ethereum",
             axelarGateway: 0xe432150cce91c13a887f7D836923d5597adD8E31,
             axelarGasService: 0x2d5d7d31F671F86C782533cc367F14109a082712,
-            uniswapV2Router: address(0),
-            uniswapV2Factory: address(0),
-            sushiswapRouter: 0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506,
-            sushiswapFactory: 0xc35DADB65012eC5796536bD9864eD8773aBc74C4,
-            uniswapV3Router: 0xE592427A0AEce92De3Edee1F18E0157C05861564,
-            uniswapV3Factory: 0x1F98431c8aD98523631AE4a59f267346ea31F984,
-            uniswapV3Quoter: 0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6,
-            deployUniV2: false,
-            deploySushi: true,
-            deployUniV3: true
+            uniswapV2Router: 0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3,
+            uniswapV2Factory: 0xF62c03E08ada871A0bEb309762E260a7a6a880E6,
+            sushiswapRouter: address(0),
+            sushiswapFactory: address(0),
+            uniswapV3Router: address(0),
+            uniswapV3Factory: address(0),
+            uniswapV3Quoter: address(0),
+            deployUniV2: true,
+            deploySushi: false,
+            deployUniV3: false
         });
         
         _deployWithConfig(config);
@@ -329,7 +269,6 @@ contract DeployWithConfig is Script {
         _deployWithConfig(config);
     }
     
-    // Хелпер функция для преобразования адреса в строку
     function toAsciiString(address addr) internal pure returns (string memory) {
         bytes memory s = new bytes(40);
         for (uint i = 0; i < 20; i++) {
@@ -342,7 +281,6 @@ contract DeployWithConfig is Script {
         return string(abi.encodePacked("0x", s));
     }
     
-    // Хелпер функция для преобразования байта в символ
     function char(bytes1 b) internal pure returns (bytes1) {
         if (uint8(b) < 10) return bytes1(uint8(b) + 0x30);
         else return bytes1(uint8(b) + 0x57);

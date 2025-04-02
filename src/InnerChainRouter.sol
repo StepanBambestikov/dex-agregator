@@ -8,6 +8,8 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IDEXAdapter} from "src/adapters/adapter.sol";
 import {InnerChainRegistry} from "src/InnerChainRegistry.sol";
 
+
+//The contract aggregates the functionality of adapters and allows you to call an adapter by its name.
 contract InnerChainRouter is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
     
@@ -31,13 +33,6 @@ contract InnerChainRouter is Ownable, ReentrancyGuard {
         returns (bool) 
     {
         return _getNeededDexContract(dexName).isPairSupported(tokenIn, tokenOut);
-    }
-
-    function _getNeededDexContract(string memory dexName) private view returns (IDEXAdapter){
-        require(registry.isDexRegistered(dexName), "No such dex");
-        (address dexAddress, bool isActive) = registry.getAdapterInfo(dexName);
-        require(isActive, "Dex is not active");
-        return IDEXAdapter(dexAddress);
     }
 
     function getExpectedReturn(
@@ -99,7 +94,7 @@ contract InnerChainRouter is Ownable, ReentrancyGuard {
         IDEXAdapter adapter = _getNeededDexContract(dexName);
         require(adapter.isPairSupported(tokenIn, tokenOut), "Pair not supported");
 
-        IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn); //TODO delegatecall failed
+        IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
         IERC20(tokenIn).approve(address(adapter), amountIn);
 
         uint256 amountOut = adapter.swap(
@@ -121,5 +116,10 @@ contract InnerChainRouter is Ownable, ReentrancyGuard {
         return amountOut;
     }
 
-    //receive() external payable {}
+    function _getNeededDexContract(string memory dexName) private view returns (IDEXAdapter){
+        require(registry.isDexRegistered(dexName), "No such dex");
+        (address dexAddress, bool isActive) = registry.getAdapterInfo(dexName);
+        require(isActive, "Dex is not active");
+        return IDEXAdapter(dexAddress);
+    }
 }

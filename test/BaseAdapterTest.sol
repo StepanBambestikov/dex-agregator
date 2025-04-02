@@ -7,13 +7,11 @@ import "../src/adapters/adapter.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 abstract contract BaseDEXAdapterTest is Test {
-    // Адреса токенов Ethereum Mainnet
     address constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
 
-    // Адрес кита с большим количеством токенов
     address constant WHALE = 0xf584F8728B874a6a5c7A8d4d387C9aae9172D621;
 
     address owner;
@@ -86,7 +84,6 @@ abstract contract BaseDEXAdapterTest is Test {
         uint256 expectedWeth = adapter.getExpectedReturn(DAI, WETH, amountIn);
         assertGt(expectedWeth, 0, "Expected WETH return should be > 0");
         
-        // Логируем результаты
         console.log(adapterName, "DAI->USDC expected:", expectedUsdc / 10**6);
         console.log(adapterName, "DAI->WETH expected:", expectedWeth / 10**18);
     }
@@ -142,8 +139,6 @@ abstract contract BaseDEXAdapterTest is Test {
             uint256 usdcAfter = usdcToken.balanceOf(user);
             assertEq(usdcAfter - usdcBefore, receivedUsdc, "Incorrect USDC amount received");
             assertGe(receivedUsdc, minAmountOut, "Received less than minimum expected");
-            
-            //console.log(adapterName, "Swap", amountIn / 10**18, "DAI -> USDC:", receivedUsdc / 10**6, "USDC");
         }
         
         vm.stopPrank();

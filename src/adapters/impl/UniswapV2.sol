@@ -28,7 +28,7 @@ contract UniswapV2Adapter is IDEXAdapter, Ownable {
     address public immutable uniswapRouter;
     address public immutable uniswapFactory;
     
-    uint256 public swapDeadline = 300;
+    uint256 public swapDeadline = 300; //5 minutes
     constructor(address _router, address _factory) Ownable(msg.sender) {
         uniswapRouter = _router;
         uniswapFactory = _factory;

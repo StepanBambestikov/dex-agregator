@@ -1,0 +1,43 @@
+forge script script/TestSwap.s.sol \                                                                                                    ─╯
+  --rpc-url $ETHEREUM_SEPOLIA_RPC_URL \
+  --broadcast \
+  --sender $ETHEREUM_ADDRESS \
+  --private-key $PRIVATE_KEY \
+  -vvvv
+
+forge script script/DeployWithConfig.s.sol:DeployWithConfig \
+    --rpc-url ETHEREUM_SEPOLIA_RPC_URL \
+    --sig "deployToEthereum()" \
+    --broadcast \
+    --verify \
+    --sender $ETHEREUM_ADDRESS \
+    --private-key $PRIVATE_KEY \
+    -vvvv
+
+forge script script/DeployWithConfig.s.sol:DeployWithConfig \
+    --rpc-url $ARBITRUM_SEPOLIA_RPC_URL \
+    --sig "deployToArbitrum()" \
+    --broadcast \
+    --verify \
+    --sender $ETHEREUM_ADDRESS \
+    --private-key $PRIVATE_KEY \
+    -vvvv
+
+
+forge script script/DeployWithConfig.s.sol:DeployWithConfig \
+    --rpc-url $ETHEREUM_SEPOLIA_RPC_URL \
+    --sig "deployToEthereum()" \
+    --broadcast \
+    --verify \
+    --sender $ETHEREUM_ADDRESS \
+    --private-key $PRIVATE_KEY \
+    -vvvv
+
+cast send \
+--from ETHEREUM_ADDRESS \
+--to ETHEREUM_ADDRESS \  
+--value 0 \
+--nonce 36 \     
+--gas-price $(cast gas-price --rpc-url $ETHEREUM_SEPOLIA_RPC_URL --increase 50) \ 
+--private-key $PRIVATE_KEY \
+--rpc-url $ETHEREUM_SEPOLIA_RPC_URL

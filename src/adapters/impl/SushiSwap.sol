@@ -26,7 +26,7 @@ contract SushiSwapAdapter is IDEXAdapter, Ownable {
     using SafeERC20 for IERC20;
     address public immutable sushiRouter;
     address public immutable sushiFactory;    
-    uint256 public swapDeadline = 300; // 5 минут
+    uint256 public swapDeadline = 300; // 5 minutes
   
     constructor(address _router, address _factory) Ownable(msg.sender) {
         sushiRouter = _router;

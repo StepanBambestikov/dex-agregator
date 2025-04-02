@@ -30,7 +30,6 @@ contract MockDEXAdapter is IDEXAdapter {
         return _expectedReturn;
     }
     
-    // Функции для тестирования
     function setIsPairSupported(bool supported) external {
         _isPairSupported = supported;
     }

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+// Any integration with the dex exchange must comply 
+// with this interface so that the router can redirect requests for token exchange.
 interface IDEXAdapter {
     function getExpectedReturn(
         address tokenIn,

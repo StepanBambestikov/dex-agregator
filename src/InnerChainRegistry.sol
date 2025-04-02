@@ -7,6 +7,9 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 import {IDEXAdapter} from "src/adapters/adapter.sol";
 
+
+//The contract is used to store all the states needed for routing within a single blockchain.
+// The functionality provides CRUD operations on adapters, as well as the ability to enable/disable them.
 contract InnerChainRegistry is Ownable, ReentrancyGuard {
     using EnumerableMap for EnumerableMap.Bytes32ToBytes32Map;
 
@@ -88,7 +91,7 @@ contract InnerChainRegistry is Ownable, ReentrancyGuard {
         string[] memory names = new string[](length);
         
         for (uint256 i = 0; i < length; i++) {
-            (bytes32 key, bytes32 nameBytes) = _dexKeys.at(i);
+            (, bytes32 nameBytes) = _dexKeys.at(i);
             names[i] = _bytesToString(nameBytes);
         }
         

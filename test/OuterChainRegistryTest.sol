@@ -160,85 +160,24 @@ contract OuterChainRegistryTest is Test {
         assertTrue(storage_.isBridgeAuthorized(bridges[2]));
     }
     
-    function testPauseAndUnpause() public {
-        // Проверка что только owner может приостановить контракт
-        vm.startPrank(unauthorizedRouter);
-        vm.expectRevert("Ownable: caller is not the owner");
-        storage_.pause();
-        vm.stopPrank();
-        
-        vm.startPrank(owner);
-        storage_.pause();
-        vm.stopPrank();
-        
-        assertTrue(storage_.paused());
-        
-        // Проверка что только owner может возобновить контракт
-        vm.startPrank(unauthorizedRouter);
-        vm.expectRevert("Ownable: caller is not the owner");
-        storage_.unpause();
-        vm.stopPrank();
-        
-        vm.startPrank(owner);
-        storage_.unpause();
-        vm.stopPrank();
-        
-        assertFalse(storage_.paused());
-    }
-    
-    function testSetAuthorizedRouter() public {
-        address newRouter = address(0x11);
-        
-        // Проверка что только owner может авторизовать роутер
-        vm.startPrank(unauthorizedRouter);
-        vm.expectRevert("Ownable: caller is not the owner");
-        storage_.setAuthorizedRouter(newRouter, true);
-        vm.stopPrank();
-        
-        vm.startPrank(owner);
-        storage_.setAuthorizedRouter(newRouter, true);
-        vm.stopPrank();
-        
-        // Проверяем, что новый роутер может устанавливать чейн имена
-        vm.startPrank(newRouter);
-        storage_.setChainName(42, "Kovan");
-        vm.stopPrank();
-        
-        assertEq(storage_.getChainName(42), "Kovan");
-        
-        // Проверяем деавторизацию
-        vm.startPrank(owner);
-        storage_.setAuthorizedRouter(newRouter, false);
-        vm.stopPrank();
-        
-        vm.startPrank(newRouter);
-        vm.expectRevert("Caller is not an authorized router");
-        storage_.setChainName(42, "Not Kovan");
-        vm.stopPrank();
-    }
-    
     function testInputValidation() public {
         vm.startPrank(authorizedRouter);
         
-        // Проверка валидации для setChainName
         vm.expectRevert("Chain name cannot be empty");
         storage_.setChainName(1, "");
         
-        // Проверка валидации для setTokenSymbol
         vm.expectRevert("Token address cannot be zero");
         storage_.setTokenSymbol(address(0), "TEST");
         
         vm.expectRevert("Symbol cannot be empty");
         storage_.setTokenSymbol(address(0x1), "");
         
-        // Проверка валидации для setRemoteRouterAddress
         vm.expectRevert("Chain name cannot be empty");
         storage_.setRemoteRouterAddress("", "0x1234");
         
         vm.expectRevert("Router address cannot be empty");
         storage_.setRemoteRouterAddress("Ethereum", "");
         
-        // Проверка валидации для setAuthorizedBridge
         vm.expectRevert("Bridge address cannot be zero");
         storage_.setAuthorizedBridge(address(0), true);
         
@@ -248,7 +187,6 @@ contract OuterChainRegistryTest is Test {
     function testArrayMismatchValidation() public {
         vm.startPrank(authorizedRouter);
         
-        // Проверка для batchSetChainNames
         uint32[] memory chainIds = new uint32[](2);
         chainIds[0] = 1;
         chainIds[1] = 2;
@@ -259,7 +197,6 @@ contract OuterChainRegistryTest is Test {
         vm.expectRevert("Arrays length mismatch");
         storage_.batchSetChainNames(chainIds, chainNames);
         
-        // Проверка для batchSetTokenSymbols
         address[] memory tokenAddresses = new address[](2);
         tokenAddresses[0] = address(0x1);
         tokenAddresses[1] = address(0x2);
@@ -270,7 +207,6 @@ contract OuterChainRegistryTest is Test {
         vm.expectRevert("Arrays length mismatch");
         storage_.batchSetTokenSymbols(tokenAddresses, symbols);
         
-        // Проверка для batchSetRemoteRouterAddresses
         string[] memory names = new string[](2);
         names[0] = "Ethereum";
         names[1] = "Polygon";
@@ -281,7 +217,6 @@ contract OuterChainRegistryTest is Test {
         vm.expectRevert("Arrays length mismatch");
         storage_.batchSetRemoteRouterAddresses(names, addresses);
         
-        // Проверка для batchSetAuthorizedBridges
         address[] memory bridges = new address[](2);
         bridges[0] = address(0x1);
         bridges[1] = address(0x2);

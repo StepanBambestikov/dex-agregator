@@ -10,7 +10,6 @@ import "./OuterChainRegistry.sol";
 import "./IInnerRouter.sol";
 import "forge-std/console.sol";
 
-// Интерфейс для Axelar Gateway
 interface IAxelarGateway {
     function callContractWithToken(
         string calldata destinationChain,
@@ -35,18 +34,19 @@ interface IAxelarGasService {
     ) external payable;
 }
 
+// The contract is used to process input commands 
+// and forward the remaining commands to the router of another blockchain.
+// The entry point can be execute With Token for a bridge call 
+// and the starting point of execute Commands for an external call.
 contract OuterChainRouter is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
-    // Внутренние контракты
     IInnerRouter public innerChainRouter;
     OuterChainRegistry public storage_;
     
-    // Axelar контракты
     IAxelarGateway public axelarGateway;
     IAxelarGasService public axelarGasService;
     
-    // Константы типов команд
     uint8 public constant SWAP_COMMAND = 1;
     uint8 public constant CROSS_CHAIN_COMMAND = 2;
     
@@ -138,7 +138,7 @@ contract OuterChainRouter is Ownable, ReentrancyGuard {
         return amountOut;
     }
     
-    function executeCrossChainCommand(CrossChainCommand memory command, bytes[] memory residueCommands) internal {
+    function executeCrossChainCommand(CrossChainCommand memory command, bytes[] memory residueCommands) private{
         string memory destinationChain = storage_.getChainName(command.destinationChainId);
         require(bytes(destinationChain).length > 0, "Destination chain not configured");
         
@@ -148,7 +148,6 @@ contract OuterChainRouter is Ownable, ReentrancyGuard {
         string memory tokenSymbol = storage_.getTokenSymbol(command.tokenToSend);
         require(bytes(tokenSymbol).length > 0, "Token symbol not configured");
         
-        // Переводим токены от пользователя на контракт
         IERC20(command.tokenToSend).safeTransferFrom(
             msg.sender, 
             address(this), 
@@ -185,7 +184,7 @@ contract OuterChainRouter is Ownable, ReentrancyGuard {
         );
     }
     
-    function executeCommands(bytes[] memory commands) public payable { //TODO must be private
+    function executeCommands(bytes[] memory commands) public payable {
         for (uint256 i = 0; i < commands.length; i++) {
             bytes memory command = commands[i];
             require(command.length > 0, "Empty command");
@@ -194,18 +193,20 @@ contract OuterChainRouter is Ownable, ReentrancyGuard {
             bytes memory commandData = _getCommandData(command);
             
             if (commandType == SWAP_COMMAND) {
+
                 SwapCommand memory swapCommand = abi.decode(commandData, (SwapCommand));
                 executeSwapCommand(swapCommand);
+
             } else if (commandType == CROSS_CHAIN_COMMAND) {
+
                 CrossChainCommand memory crossChainCommand = abi.decode(commandData, (CrossChainCommand));
-                
                 bytes[] memory residueCommands = new bytes[](commands.length - i - 1);
                 for (uint256 j = 0; j < residueCommands.length; j++) {
                     residueCommands[j] = commands[i + j + 1];
                 }
-                
                 executeCrossChainCommand(crossChainCommand, residueCommands);
                 break;
+
             } else {
                 revert("Unknown command type");
             }
@@ -216,9 +217,8 @@ contract OuterChainRouter is Ownable, ReentrancyGuard {
         string calldata sourceChain,
         string calldata sourceAddress,
         bytes calldata payload,
-        string calldata tokenSymbol,
-        uint256 amount
-    ) external nonReentrant {
+        string calldata tokenSymbol
+    ) external payable nonReentrant {
         require(msg.sender == address(axelarGateway), "Only gateway can execute");
 
         string memory expectedSourceAddress = storage_.getRemoteRouterAddress(sourceChain);
@@ -227,7 +227,7 @@ contract OuterChainRouter is Ownable, ReentrancyGuard {
             "Source address is not trusted"
         );
         
-        (bytes memory destinationAddress, bytes[] memory commands) = abi.decode(
+        (, bytes[] memory commands) = abi.decode(
             payload, 
             (bytes, bytes[])
         );

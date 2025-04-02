@@ -62,7 +62,7 @@ contract UniswapV3Adapter is IDEXAdapter, Ownable {
     address public immutable uniswapQuoter;
     
     uint24[3] public feeTiers = [500, 3000, 10000]; // 0.05%, 0.3%, 1%
-    uint256 public swapDeadline = 300;
+    uint256 public swapDeadline = 300; //5 minutes
     
     constructor(address _router, address _factory, address _quoter) Ownable(msg.sender) {
         uniswapRouter = _router;
