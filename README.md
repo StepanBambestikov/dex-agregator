@@ -121,22 +121,34 @@ Run specific test suite:
 forge test --match-test testUniswapV2Swaps -vv
 ```
 
-## Security
+## Deploy ethereum sepolia
 
-- All contracts are thoroughly tested with 95%+ test coverage
-- Uses OpenZeppelin contracts for security-critical components
-- Regular audits conducted by third-party security firms
+```
+=== Deploying to ethereum ===
+  Deployed InnerChainRegistry at: 0xe1bad821B0a748Ddf7ee2Ad44BA7d1AC2E5fe067
+  Deployed UniswapV2Adapter at: 0xd6F782e84C08C67D3cb79f70e1DEB383264398dd
+  Deployed SushiSwapAdapter at: 0x4b6360969530926Ac9d9B2A98799d965e6755667
+  Deployed UniswapV3Adapter at: 0x15c8D1cDF375893eCA8F3ff5702EBf9640d220f9
+  Deployed InnerChainRouter at: 0x744C68430876469F5abBE9fECF483AEB5A4820A8
+  Deployed OuterChainRegistry at: 0x22c99651FdB8Da16390d833cde5d268122e7475B
+  Deployed OuterChainRouterAxelar at: 0xd993A31234C12139022b2351495EFD1E124be0cD
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contributing
-
-Contributions are welcome! Please read our [Contribution Guidelines](CONTRIBUTING.md) before submitting pull requests.
-
-## Contact
-
-For inquiries, please contact: dev@crosschaindex.com
-
-Join our Discord: [https://discord.gg/crosschaindex](https://discord.gg/crosschaindex)
+=== Deployment Summary ===
+  Network: ethereum
+  Destination Chain: optimism
+  --------------------------
+  Core Contracts:
+  - InnerChainRegistry: 0xe1bad821B0a748Ddf7ee2Ad44BA7d1AC2E5fe067
+  - InnerChainRouter: 0x744C68430876469F5abBE9fECF483AEB5A4820A8
+  - OuterChainRegistry: 0x22c99651FdB8Da16390d833cde5d268122e7475B
+  - OuterChainRouter: 0xd993A31234C12139022b2351495EFD1E124be0cD
+  --------------------------
+  DEX Adapters Configured:
+  - UniswapV2: Enabled
+  - SushiSwap: Enabled
+  - UniswapV3: Enabled
+  --------------------------
+  Axelar Configuration:
+  - Gateway: 0x4F4495243837681061C4743b74B3eEdf548D56A5
+  - Gas Service: 0x2d5d7d31F671F86C782533cc367F14109a082712
+```
